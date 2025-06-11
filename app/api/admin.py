@@ -5,7 +5,7 @@ from typing import List
 from schemas.user import UserRead
 from schemas.comment import CommentRead
 from services.user import update_user_admin
-from services.comment import get_comments, delete_comment_admin
+from services.comment import get_comments
 from core.database import get_db
 from core.security import get_current_active_admin, get_user_by_uid
 from models.user import User
