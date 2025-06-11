@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update
 from models.user import User
 from schemas.user import UserCreate
-from core.security import (get_password_hash, verify_password, get_user_by_name)
+from core.security import (get_password_hash, verify_password, get_user_by_name, get_user_by_uid)
 
 
 async def create_user(db: AsyncSession, user_data: UserCreate):
@@ -11,7 +11,8 @@ async def create_user(db: AsyncSession, user_data: UserCreate):
         email=user_data.email,
         hashed_password=hashed_password,
         full_name=user_data.full_name,
-        is_active=True
+        is_active=True,
+        is_admin=user_data.is_admin
     )
     db.add(db_user)
     await db.commit()
@@ -26,11 +27,18 @@ async def authenticate_user(db: AsyncSession, name: str, password: str):
     return user
 
 
-async def make_admin(db: AsyncSession, user_id: int):
-    await db.execute(
-        update(User)
-        .where(User.id == user_id)
-        .values(is_admin=True)
-    )
+async def update_user_admin(
+        db: AsyncSession,
+        user_id: int,
+        update_data: dict
+) -> User:
+    db_user = await get_user_by_uid(db, user_id)
+    if not db_user:
+        return None
+
+    for field, value in update_data.items():
+        setattr(db_user, field, value)
+
     await db.commit()
-    return await get_user(db, user_id)
+    await db.refresh(db_user)
+    return db_user

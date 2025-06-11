@@ -5,6 +5,9 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from core.database import async_engine, Base
 from api.auth import auth_router
+from api.users import user_router
+from api.admin import admin_router
+
 import uvicorn
 import uvloop
 
@@ -33,6 +36,8 @@ async def validation_exception_handler(request, exc):
     )
 
 app.include_router(auth_router, prefix="/auth", tags=["auth"])
+app.include_router(user_router, prefix="/user", tags=["user"])
+app.include_router(admin_router)
 
 if __name__ == '__main__':
     # from core.database import async_engine, Base

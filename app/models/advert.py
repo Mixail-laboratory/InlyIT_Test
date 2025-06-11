@@ -15,4 +15,4 @@ class Advertisement(Base):
 
     created_at = Column(DateTime, default=datetime.utcnow)
     owner = relationship("User", back_populates="advertisements")
-    # comments = relationship("Comment", back_populates="advert")
+    comments = relationship("Comment", back_populates="advertisement")

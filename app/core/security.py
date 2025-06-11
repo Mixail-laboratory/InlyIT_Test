@@ -42,6 +42,11 @@ async def get_user_by_name(db: AsyncSession, name: str):
     )
     return result.scalars().first()
 
+async def get_user_by_uid(db: AsyncSession, uid: str):
+    result = await db.execute(
+        select(User).where(User.id == uid)
+    )
+    return result.scalars().first()
 
 async def get_current_user(
         token: str = Depends(oauth2_scheme),
@@ -78,4 +83,22 @@ async def get_current_active_user(
 ) -> User:
     if not current_user.is_active:
         raise HTTPException(status_code=400, detail="Inactive user")
+    return current_user
+
+async def get_current_active_admin(
+    current_user: User = Depends(get_current_user)
+) -> User:
+    """
+    Проверка, что пользователь - активный администратор
+    """
+    if not current_user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Inactive user"
+        )
+    if not current_user.is_admin:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin privileges required"
+        )
     return current_user

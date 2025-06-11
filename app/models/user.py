@@ -13,4 +13,4 @@ class User(Base):
     is_admin = Column(Boolean, default=False)
 
     advertisements = relationship("Advertisement", back_populates="owner")
-    #comments = relationship("Comment", back_populates="author")
+    comments = relationship("Comment", back_populates="author")
