@@ -54,10 +54,10 @@ ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 ```
 
-Запустите сервер:
+Запустите сервер в виртуальной среде:
 
 ```
-uvicorn app.main:app --reload
+python main.py
 ```
 ## API Endpoints
 
