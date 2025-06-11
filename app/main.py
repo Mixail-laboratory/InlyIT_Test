@@ -40,16 +40,5 @@ app.include_router(user_router, prefix="/user", tags=["user"])
 app.include_router(admin_router)
 
 if __name__ == '__main__':
-    # from core.database import async_engine, Base
-    # import asyncio
-    #
-    #
-    # async def reset_db():
-    #     async with async_engine.begin() as conn:
-    #         await conn.run_sync(Base.metadata.drop_all)
-    #         await conn.run_sync(Base.metadata.create_all)
-    #
-    #
-    # asyncio.run(reset_db())
     uvloop.install()
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
