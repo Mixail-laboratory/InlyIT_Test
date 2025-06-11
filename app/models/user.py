@@ -7,9 +7,10 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True)
-    password_hash = Column(String)
-    username = Column(String)
+    hashed_password = Column(String)
+    full_name = Column(String)
+    is_active = Column(Boolean, default=True)
     is_admin = Column(Boolean, default=False)
 
     adverts = relationship("Advert", back_populates="owner")
-    comments = relationship("Comment", back_populates="author")
+    #comments = relationship("Comment", back_populates="author")

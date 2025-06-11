@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.database import get_db
 from schemas.user import UserCreate, UserRead
 from services.user import create_user, authenticate_user
-#from .auth_utils import create_access_token
+from core.security import create_access_token
 
 router = APIRouter()
 
@@ -21,7 +21,7 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: AsyncSessi
     if not user:
         raise HTTPException(status_code=400, detail="Incorrect username or password")
 
-    access_token = create_access_token(data={"sub": user.username})
+    access_token = create_access_token(data={"sub": user.full_name})
     return {"access_token": access_token, "token_type": "bearer"}
 
 auth_router = router

@@ -16,7 +16,7 @@ class Advert(Base):
     title = Column(String, index=True)
     description = Column(Text)
     type = Column(Enum(TypeAdvert))
-    owner_id = Column(Integer, ForeignKey("user.user_id"))
+    owner_id = Column(Integer, ForeignKey("user.id"))
 
     owner = relationship("User", back_populates="adverts")
-    comments = relationship("Comment", back_populates="advert")
+    #comments = relationship("Comment", back_populates="advert")
