@@ -4,16 +4,19 @@ from base import Base
 
 
 class TypeAdvert(str, Enum):
-    vacancy = "vacancy"
+    SALE = "sale",
+    PURCHASE = "purchase",
+    SERVICE = "service"
 
 
 class Advert(Base):
-    __table_name__ = "adverts"
+    __tablename__ = "adverts"
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String, index=True)
     description = Column(Text)
-    owner_id = Column(Integer, ForeignKey("user.id"))
+    type = Column(Enum(TypeAdvert))
+    owner_id = Column(Integer, ForeignKey("user.user_id"))
 
     owner = relationship("User", back_populates="adverts")
     comments = relationship("Comment", back_populates="advert")

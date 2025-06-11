@@ -1,9 +1,39 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 from core.database import async_engine, Base
+from api.auth import auth_router
+import uvicorn
+import uvloop
 
-app = FastAPI()
-
-@app.on_event("startup")
-async def startup():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     async with async_engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+    yield
+    await async_engine.dispose()
+
+app = FastAPI(lifespan=lifespan, title="Advertisement Service")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request, exc):
+    return JSONResponse(
+        status_code=400,
+        content={"detail": exc.errors()},
+    )
+
+app.include_router(auth_router, prefix="/auth", tags=["auth"])
+
+if __name__ == '__main__':
+    uvloop.install()
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
